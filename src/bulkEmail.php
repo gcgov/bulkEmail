@@ -34,8 +34,10 @@ class bulkEmail {
 			] );
 		}
 		catch( GuzzleException $e ) {
-			$logger = \gcgov\framework\services\bulkEmail\config::getDebugLogger();
-			$logger->error( $e->getMessage() );
+			if(\gcgov\framework\services\bulkEmail\config::isDebugLogging()) {
+				$logger = \gcgov\framework\services\bulkEmail\config::getDebugLogger();
+				$logger->error( $e->getMessage() );
+			}
 			error_log($e);
 			throw new \gcgov\framework\services\bulkEmail\exceptions\bulkEmailException( 'Subscription failed because the email delivery service could be reached' );
 		}
@@ -65,8 +67,10 @@ class bulkEmail {
 			] );
 		}
 		catch( GuzzleException $e ) {
-			$logger = \gcgov\framework\services\bulkEmail\config::getDebugLogger();
-			$logger->error( $e->getMessage() );
+			if(\gcgov\framework\services\bulkEmail\config::isDebugLogging()) {
+				$logger = \gcgov\framework\services\bulkEmail\config::getDebugLogger();
+				$logger->error( $e->getMessage() );
+			}
 			error_log($e);
 			throw new \gcgov\framework\services\bulkEmail\exceptions\bulkEmailException( 'Sending messages failed' );
 		}
