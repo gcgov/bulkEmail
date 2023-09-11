@@ -1,10 +1,7 @@
 <?php
 namespace gcgov\framework\services\bulkEmail\models;
 
-use OpenApi\Attributes as OA;
-
-#[OA\Schema]
-class messageToEmail extends \gcgov\framework\services\mongodb\embeddable {
+class messageToEmail {
 
 	public ?template $template = template::countyTemplate2023;
 

@@ -76,4 +76,36 @@ class bulkEmail {
 		}
 	}
 
+	/**
+	 * @param \gcgov\framework\services\bulkEmail\models\messageToChannel $message
+	 *
+	 * @return void
+	 * @throws \gcgov\framework\services\bulkEmail\exceptions\bulkEmailException
+	 */
+	public static function messageToEmail( \gcgov\framework\services\bulkEmail\models\messageToEmail $message ): void {
+		if(empty(\gcgov\framework\services\bulkEmail\config::getApiUrl())) {
+			throw new \gcgov\framework\services\bulkEmail\exceptions\bulkEmailException( 'Bulk email api url not set. Prior to calling subscribe you must set \gcgov\framework\services\bulkEmail\config::setApiUrl( \'https://bulkemailapi.example.com\' );' );
+		}
+		if(empty(\gcgov\framework\services\bulkEmail\config::getApiAccessToken())) {
+			throw new \gcgov\framework\services\bulkEmail\exceptions\bulkEmailException( 'Bulk email api url not set. Prior to calling subscribe you must set \gcgov\framework\services\bulkEmail\config::setApiAccessToken( \'jwt\' );' );
+		}
+		$client = new \GuzzleHttp\Client( [ 'base_uri' => \gcgov\framework\services\bulkEmail\config::getApiUrl() ] );
+		try {
+			$client->request( 'POST', 'message/toEmail', [
+				'json' => $message,
+				'headers'=>[
+					'Authorization' => 'Bearer ' . \gcgov\framework\services\bulkEmail\config::getApiAccessToken(),
+				]
+			] );
+		}
+		catch( GuzzleException $e ) {
+			if(\gcgov\framework\services\bulkEmail\config::isDebugLogging()) {
+				$logger = \gcgov\framework\services\bulkEmail\config::getDebugLogger();
+				$logger->error( $e->getMessage() );
+			}
+			error_log($e);
+			throw new \gcgov\framework\services\bulkEmail\exceptions\bulkEmailException( 'Sending messages failed' );
+		}
+	}
+
 }
