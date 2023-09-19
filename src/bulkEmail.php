@@ -2,7 +2,6 @@
 
 namespace gcgov\framework\services\bulkEmail;
 
-use gcgov\framework\services\bulkEmail\models\messageToChannel;
 use GuzzleHttp\Exception\GuzzleException;
 
 class bulkEmail {
@@ -77,7 +76,7 @@ class bulkEmail {
 	}
 
 	/**
-	 * @param \gcgov\framework\services\bulkEmail\models\messageToChannel $message
+	 * @param \gcgov\framework\services\bulkEmail\models\messageToEmail $message
 	 *
 	 * @return void
 	 * @throws \gcgov\framework\services\bulkEmail\exceptions\bulkEmailException
