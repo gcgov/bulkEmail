@@ -9,11 +9,12 @@ class bulkEmail {
 	/**
 	 * @param string[] $emailAddresses
 	 * @param string[] $channelIds
+	 * @param bool     $force Subscribe email address even if they previously unsubscribed
 	 *
 	 * @return void
 	 * @throws \gcgov\framework\services\bulkEmail\exceptions\bulkEmailException
 	 */
-	public static function subscribe( array $emailAddresses = [], array $channelIds = [] ): void {
+	public static function subscribe( array $emailAddresses = [], array $channelIds = [], bool $force=true ): void {
 		if(empty(\gcgov\framework\services\bulkEmail\config::getApiUrl())) {
 			throw new \gcgov\framework\services\bulkEmail\exceptions\bulkEmailException( 'Bulk email api url not set. Prior to calling subscribe you must set \gcgov\framework\services\bulkEmail\config::setApiUrl( \'https://bulkemailapi.example.com\' );' );
 		}
@@ -26,6 +27,7 @@ class bulkEmail {
 				'json' => [
 					'emailAddresses' => $emailAddresses,
 					'channelIds'     => $channelIds,
+					'force'          => $force,
 				],
 				'headers'=>[
 					'Authorization' => 'Bearer ' . \gcgov\framework\services\bulkEmail\config::getApiAccessToken(),
