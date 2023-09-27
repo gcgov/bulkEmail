@@ -7,6 +7,19 @@ use GuzzleHttp\Exception\GuzzleException;
 class bulkEmail {
 
 	/**
+	 * @throws \gcgov\framework\services\bulkEmail\exceptions\bulkEmailException
+	 */
+	protected static function validateRuntimeConfiguration(): bool {
+		if(empty(\gcgov\framework\services\bulkEmail\config::getApiUrl())) {
+			throw new \gcgov\framework\services\bulkEmail\exceptions\bulkEmailException( 'Bulk email api url not set. Prior to calling subscribe you must set \gcgov\framework\services\bulkEmail\config::setApiUrl( \'https://bulkemailapi.example.com\' );' );
+		}
+		if(empty(\gcgov\framework\services\bulkEmail\config::getApiAccessToken())) {
+			throw new \gcgov\framework\services\bulkEmail\exceptions\bulkEmailException( 'Bulk email api url not set. Prior to calling subscribe you must set \gcgov\framework\services\bulkEmail\config::setApiAccessToken( \'jwt\' );' );
+		}
+		return true;
+	}
+
+	/**
 	 * @param string[] $emailAddresses
 	 * @param string[] $channelIds
 	 * @param bool     $force Subscribe email address even if they previously unsubscribed
@@ -15,12 +28,8 @@ class bulkEmail {
 	 * @throws \gcgov\framework\services\bulkEmail\exceptions\bulkEmailException
 	 */
 	public static function subscribe( array $emailAddresses = [], array $channelIds = [], bool $force=true ): void {
-		if(empty(\gcgov\framework\services\bulkEmail\config::getApiUrl())) {
-			throw new \gcgov\framework\services\bulkEmail\exceptions\bulkEmailException( 'Bulk email api url not set. Prior to calling subscribe you must set \gcgov\framework\services\bulkEmail\config::setApiUrl( \'https://bulkemailapi.example.com\' );' );
-		}
-		if(empty(\gcgov\framework\services\bulkEmail\config::getApiAccessToken())) {
-			throw new \gcgov\framework\services\bulkEmail\exceptions\bulkEmailException( 'Bulk email api url not set. Prior to calling subscribe you must set \gcgov\framework\services\bulkEmail\config::setApiAccessToken( \'jwt\' );' );
-		}
+		static::validateRuntimeConfiguration();
+
 		$client = new \GuzzleHttp\Client( [ 'base_uri' => \gcgov\framework\services\bulkEmail\config::getApiUrl() ] );
 		try {
 			$response = $client->request( 'POST', 'subscribe', [
@@ -44,6 +53,44 @@ class bulkEmail {
 		}
 	}
 
+	/**
+	 * @param string[] $emailAddresses
+	 * @param string   $channelId
+	 * @param bool     $force Subscribe email address even if they previously unsubscribed
+	 *
+	 * @return void
+	 * @throws \gcgov\framework\services\bulkEmail\exceptions\bulkEmailException
+	 */
+	public static function syncChannel( array $emailAddresses = [], string $channelId='', bool $force=false ): void {
+		static::validateRuntimeConfiguration();
+
+		$client = new \GuzzleHttp\Client( [ 'base_uri' => \gcgov\framework\services\bulkEmail\config::getApiUrl() ] );
+		try {
+			$response = $client->request( 'POST', 'subscribe/syncChannel', [
+				'json' => [
+					'emailAddresses' => $emailAddresses,
+					'channelId'      => $channelId,
+					'force'          => $force,
+				],
+				'headers'=>[
+					'Authorization' => 'Bearer ' . \gcgov\framework\services\bulkEmail\config::getApiAccessToken(),
+				]
+			] );
+			if(\gcgov\framework\services\bulkEmail\config::isDebugLogging()) {
+				$logger = \gcgov\framework\services\bulkEmail\config::getDebugLogger();
+				$logger->debug( $response->getBody() );
+			}
+		}
+		catch( GuzzleException $e ) {
+			if(\gcgov\framework\services\bulkEmail\config::isDebugLogging()) {
+				$logger = \gcgov\framework\services\bulkEmail\config::getDebugLogger();
+				$logger->error( $e->getMessage() );
+			}
+			error_log($e);
+			throw new \gcgov\framework\services\bulkEmail\exceptions\bulkEmailException( 'Subscription failed because the email delivery service could be reached' );
+		}
+	}
+
 
 	/**
 	 * @param \gcgov\framework\services\bulkEmail\models\messageToChannel $message
@@ -52,12 +99,8 @@ class bulkEmail {
 	 * @throws \gcgov\framework\services\bulkEmail\exceptions\bulkEmailException
 	 */
 	public static function messageToChannel( \gcgov\framework\services\bulkEmail\models\messageToChannel $message ): void {
-		if(empty(\gcgov\framework\services\bulkEmail\config::getApiUrl())) {
-			throw new \gcgov\framework\services\bulkEmail\exceptions\bulkEmailException( 'Bulk email api url not set. Prior to calling subscribe you must set \gcgov\framework\services\bulkEmail\config::setApiUrl( \'https://bulkemailapi.example.com\' );' );
-		}
-		if(empty(\gcgov\framework\services\bulkEmail\config::getApiAccessToken())) {
-			throw new \gcgov\framework\services\bulkEmail\exceptions\bulkEmailException( 'Bulk email api url not set. Prior to calling subscribe you must set \gcgov\framework\services\bulkEmail\config::setApiAccessToken( \'jwt\' );' );
-		}
+		static::validateRuntimeConfiguration();
+
 		$client = new \GuzzleHttp\Client( [ 'base_uri' => \gcgov\framework\services\bulkEmail\config::getApiUrl() ] );
 		try {
 			$client->request( 'POST', 'message/toChannel', [
@@ -84,12 +127,8 @@ class bulkEmail {
 	 * @throws \gcgov\framework\services\bulkEmail\exceptions\bulkEmailException
 	 */
 	public static function messageToEmail( \gcgov\framework\services\bulkEmail\models\messageToEmail $message ): void {
-		if(empty(\gcgov\framework\services\bulkEmail\config::getApiUrl())) {
-			throw new \gcgov\framework\services\bulkEmail\exceptions\bulkEmailException( 'Bulk email api url not set. Prior to calling subscribe you must set \gcgov\framework\services\bulkEmail\config::setApiUrl( \'https://bulkemailapi.example.com\' );' );
-		}
-		if(empty(\gcgov\framework\services\bulkEmail\config::getApiAccessToken())) {
-			throw new \gcgov\framework\services\bulkEmail\exceptions\bulkEmailException( 'Bulk email api url not set. Prior to calling subscribe you must set \gcgov\framework\services\bulkEmail\config::setApiAccessToken( \'jwt\' );' );
-		}
+		static::validateRuntimeConfiguration();
+
 		$client = new \GuzzleHttp\Client( [ 'base_uri' => \gcgov\framework\services\bulkEmail\config::getApiUrl() ] );
 		try {
 			$client->request( 'POST', 'message/toEmail', [
