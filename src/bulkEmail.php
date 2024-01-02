@@ -99,7 +99,7 @@ class bulkEmail {
 
 		$client = new \GuzzleHttp\Client( [ 'base_uri' => \gcgov\framework\services\bulkEmail\config::getApiUrl() ] );
 		try {
-			$response = $client->request( 'GET', 'contact?channelId='.$channelId, [
+			$response = $client->request( 'GET', 'contact?limit=1000&page=1&channelId='.$channelId, [
 				'headers'=>[
 					'Authorization' => 'Bearer ' . \gcgov\framework\services\bulkEmail\config::getApiAccessToken(),
 				]
