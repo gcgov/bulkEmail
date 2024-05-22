@@ -16,8 +16,11 @@ class attachment {
 	 *
 	 * @throws \gcgov\framework\services\bulkEmail\exceptions\bulkEmailException
 	 */
-	public function __construct( string $filePathname ) {
-		if( file_exists( $filePathname ) ) {
+	public function __construct( string $filePathname='' ) {
+		if(empty($filePathname)) {
+
+		}
+		elseif( file_exists( $filePathname ) ) {
 			$this->filename             = basename( $filePathname );
 			$this->base64EncodedContent = base64_encode( file_get_contents( $filePathname ) );
 		}
