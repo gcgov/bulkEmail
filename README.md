@@ -37,7 +37,7 @@ subscribed to that provided channel and new channels provided will be added as a
 
 ```php
 //                                             messageToChannel( string[] $emailAddresses,   string[] $channelIds=[] )
-\gcgov\framework\services\bulkEmail\bulkEmail::messageToChannel( ['jdoe@garrettcounty.org'], [ '64f1e3a45d0afbf5408370cc' ] );
+\gcgov\framework\services\bulkEmail\bulkEmail::messageToChannel( ['jdoe@garrettcountymd.gov'], [ '64f1e3a45d0afbf5408370cc' ] );
 ```
 
 ## Send a Bulk Email to Channel Subscribers
@@ -86,7 +86,7 @@ $message->template  = \gcgov\framework\services\bulkEmail\models\template::count
 //$message->sendingDepartmentId  = '{departmentId}';
 
 //send this message to these email addresses
-$message->to = ['jdoe@garrettcounty.org'];
+$message->to = ['jdoe@garrettcountymd.gov'];
 
 //email subject line
 $message->subject   = 'Subject';
